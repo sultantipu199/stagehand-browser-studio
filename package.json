@@ -1,0 +1,38 @@
+{
+  "name": "stagehand-automation",
+  "version": "1.0.0",
+  "description": "Autonomous browser automation using Stagehand in local mode",
+  "type": "module",
+  "main": "index.ts",
+  "scripts": {
+    "start": "tsx index.ts",
+    "gui": "tsx server.ts",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "stagehand",
+    "browserbase",
+    "automation",
+    "ai"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@browserbasehq/stagehand": "^3.0.8",
+    "dotenv": "^16.6.1",
+    "express": "^5.2.1",
+    "localtunnel": "^2.0.2",
+    "qrcode": "^1.5.4",
+    "untun": "^0.2.2",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/localtunnel": "^2.0.4",
+    "@types/node": "^26.6.4",
+    "@types/qrcode": "^1.5.6",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  }
+}

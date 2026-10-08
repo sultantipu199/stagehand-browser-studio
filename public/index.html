@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>Stagehand Studio - Autonomous AI Browser Automation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <meta name="theme-color" content="#080c14">
+</head>
+<body>
+  <div class="glow-bg"></div>
+
+  <!-- Header -->
+  <header class="app-header">
+    <div class="brand">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="logo-title">Stagehand Studio</h1>
+        <p class="logo-sub">Autonomous AI Browser Automation Controller</p>
+      </div>
+    </div>
+
+    <div class="header-status">
+      <!-- Engine Status -->
+      <div class="status-badge" id="engineStatusBadge">
+        <span class="status-dot" id="statusDot"></span>
+        <span id="engineStatusText">Idle</span>
+      </div>
+      
+      <!-- AI Model Badge -->
+      <div class="provider-badge" id="activeProviderBadge">
+        <span class="provider-pill-dot"></span>
+        <span id="activeProviderText">Connecting...</span>
+      </div>
+
+      <!-- Worldwide Online Status -->
+      <button class="tunnel-badge" id="openTunnelModalBtn" title="Click to view Worldwide Link & QR Code">
+        <span class="tunnel-dot" id="tunnelDot"></span>
+        <span id="tunnelStatusText">🌍 Worldwide</span>
+      </button>
+
+      <!-- Settings Button -->
+      <button class="icon-btn" id="openSettingsBtn" title="API Settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile View Switcher Tabs (Shown on Phone & Tablet) -->
+  <nav class="mobile-tabs-nav" id="mobileTabsNav">
+    <button class="mobile-tab-btn active" id="tabBtnControl" data-target="control">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="3"></circle>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+      </svg>
+      <span>Mission Control</span>
+    </button>
+    <button class="mobile-tab-btn" id="tabBtnConsole" data-target="monitor">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="4 17 10 11 4 5"></polyline>
+        <line x1="12" y1="19" x2="20" y2="19"></line>
+      </svg>
+      <span>Live Terminal</span>
+      <span class="tab-activity-indicator" id="terminalActivityBadge"></span>
+    </button>
+  </nav>
+
+  <!-- Main Container -->
+  <main class="app-layout">
+    <!-- Left Column: Controls & Presets -->
+    <section class="control-panel glass-card tab-view-active" id="controlPanelSection">
+      <div class="panel-header">
+        <h2>Mission Control</h2>
+        <span class="sub-label">Dispatch autonomous browser tasks in plain English</span>
+      </div>
+
+      <!-- Quick Presets -->
+      <div class="presets-section">
+        <label class="field-label">Quick Templates</label>
+        <div class="preset-chips">
+          <button class="preset-chip" id="presetGoogle" data-url="https://www.google.com" data-inst="Type 'Generative AI Engineering' into the search bar and press enter" data-mode="act">
+            🔍 Google Search
+          </button>
+          <button class="preset-chip" id="presetWiki" data-url="https://en.wikipedia.org" data-inst="Search for 'Autonomous agent' and extract the introductory paragraph" data-mode="extract">
+            📖 Wikipedia Extract
+          </button>
+          <button class="preset-chip" id="presetHackerNews" data-url="https://news.ycombinator.com" data-inst="Observe top story titles and interactive links" data-mode="observe">
+            📰 Hacker News
+          </button>
+          <button class="preset-chip" id="presetDaraz" data-url="https://www.google.com" data-inst="Search for 'Latest Artificial Intelligence Research Papers' and submit" data-mode="act">
+            🤖 AI Research
+          </button>
+        </div>
+      </div>
+
+      <!-- Target URL Input -->
+      <div class="input-group">
+        <label for="targetUrlInput" class="field-label">Target Website URL</label>
+        <div class="input-with-icon">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="2" y1="12" x2="22" y2="12"></line>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+          </svg>
+          <input type="url" id="targetUrlInput" placeholder="https://www.google.com" value="https://www.google.com" required autocomplete="off">
+        </div>
+      </div>
+
+      <!-- AI Instruction Input -->
+      <div class="input-group">
+        <label for="aiInstructionInput" class="field-label">AI Natural Language Instruction</label>
+        <textarea id="aiInstructionInput" rows="3" placeholder="Tell the AI what to do (e.g. Type 'Generative AI Engineering' and press Enter, click Login, or extract the pricing table)..." required>Type 'Generative AI Engineering' into the search bar and press enter</textarea>
+      </div>
+
+      <!-- Mode & Options -->
+      <div class="options-row">
+        <div class="mode-selector">
+          <label class="field-label">Execution Mode</label>
+          <div class="radio-tabs">
+            <label class="tab-label">
+              <input type="radio" name="executionMode" value="act" checked>
+              <span>Act</span>
+            </label>
+            <label class="tab-label">
+              <input type="radio" name="executionMode" value="extract">
+              <span>Extract</span>
+            </label>
+            <label class="tab-label">
+              <input type="radio" name="executionMode" value="observe">
+              <span>Observe</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="headless-toggle">
+          <label class="field-label">Browser View</label>
+          <label class="switch">
+            <input type="checkbox" id="headlessCheckbox">
+            <span class="slider"></span>
+          </label>
+          <span class="switch-text" id="headlessLabel">Visible GUI</span>
+        </div>
+      </div>
+
+      <!-- Desktop Action Buttons -->
+      <div class="action-buttons desktop-only">
+        <button class="btn btn-primary" id="runAutomationBtn">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          </svg>
+          Launch Autonomous Agent
+        </button>
+        <button class="btn btn-danger" id="stopAutomationBtn" disabled>
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="6" y="6" width="12" height="12"></rect>
+          </svg>
+          Stop Session
+        </button>
+      </div>
+    </section>
+
+    <!-- Right Column: Live Terminal & Results -->
+    <section class="monitor-panel glass-card" id="monitorPanelSection">
+      <div class="monitor-header">
+        <div class="terminal-tab">
+          <span class="tab-dot dot-red"></span>
+          <span class="tab-dot dot-yellow"></span>
+          <span class="tab-dot dot-green"></span>
+          <span class="tab-title">Live Execution Console</span>
+        </div>
+        <div class="terminal-actions">
+          <button class="btn-sm" id="clearConsoleBtn">Clear Logs</button>
+        </div>
+      </div>
+
+      <!-- Terminal Output -->
+      <div class="terminal-body" id="terminalBody">
+        <div class="log-line log-system">
+          <span class="log-time">[System]</span>
+          <span class="log-msg">Stagehand Studio initialized. Ready for automation mission.</span>
+        </div>
+      </div>
+
+      <!-- Results Display Drawer -->
+      <div class="results-drawer" id="resultsDrawer" style="display: none;">
+        <div class="results-header">
+          <h3>Extracted Output</h3>
+          <button class="btn-sm" id="closeResultsBtn">&times;</button>
+        </div>
+        <pre class="results-code" id="resultsContent"></pre>
+      </div>
+    </section>
+  </main>
+
+  <!-- Mobile Floating Sticky Bottom Launch Bar -->
+  <div class="mobile-bottom-bar" id="mobileBottomBar">
+    <button class="btn btn-primary mobile-launch-btn" id="mobileRunAutomationBtn">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+      </svg>
+      <span id="mobileLaunchBtnText">Launch Agent</span>
+    </button>
+    <button class="btn btn-danger mobile-stop-btn" id="mobileStopAutomationBtn" disabled>
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="6" y="6" width="12" height="12"></rect>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Worldwide Remote & QR Modal -->
+  <div class="modal-backdrop" id="qrModal" style="display: none;">
+    <div class="modal-card glass-card qr-modal-card">
+      <div class="modal-header">
+        <div class="qr-modal-title-group">
+          <h2>🌍 Worldwide Remote & Mobile Access</h2>
+          <p class="modal-desc">Access this dashboard from ANY device, ANY cellular network (4G/5G), or ANY Wi-Fi worldwide.</p>
+        </div>
+        <button class="close-modal-btn" id="closeQrModalBtn">&times;</button>
+      </div>
+      <div class="modal-body qr-modal-body">
+        <!-- Live QR Code -->
+        <div class="qr-code-wrapper" id="qrCodeWrapper">
+          <img id="qrCodeImage" src="" alt="Scan QR Code to open on Mobile" class="qr-image">
+        </div>
+        
+        <!-- Public Worldwide URL -->
+        <div class="qr-info-box">
+          <div class="url-label-row">
+            <span class="status-indicator-pill active">🌐 Worldwide HTTPS (Public)</span>
+            <span class="badge-tag">Any Network / 4G / 5G</span>
+          </div>
+          <div class="copy-url-group">
+            <input type="text" id="publicUrlDisplay" readonly value="Connecting tunnel...">
+            <button class="btn-copy" id="copyPublicUrlBtn">
+              <span id="copyPublicBtnText">Copy</span>
+            </button>
+          </div>
+
+          <!-- Local Wi-Fi URL -->
+          <div class="url-label-row" style="margin-top: 10px;">
+            <span class="status-indicator-pill">🏠 Same Wi-Fi Network</span>
+            <span class="badge-tag">Local LAN</span>
+          </div>
+          <div class="copy-url-group">
+            <input type="text" id="lanUrlDisplay" readonly value="Loading...">
+            <button class="btn-copy" id="copyLanUrlBtn">
+              <span id="copyLanBtnText">Copy</span>
+            </button>
+          </div>
+
+          <!-- Tunnel Toggle -->
+          <div class="tunnel-toggle-row">
+            <button class="btn-toggle-tunnel" id="toggleTunnelBtn">Restart Public Tunnel</button>
+            <p class="qr-tip">💡 Scan the QR Code with your smartphone camera to immediately control your agent from anywhere.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div class="modal-backdrop" id="settingsModal" style="display: none;">
+    <div class="modal-card glass-card">
+      <div class="modal-header">
+        <h2>AI Model & API Key Settings</h2>
+        <button class="close-modal-btn" id="closeSettingsBtn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-desc">Configure your LLM API keys directly. Changes are automatically saved to your <code>.env</code> file.</p>
+        
+        <div class="input-group">
+          <label for="geminiKeyInput" class="field-label">Google Gemini API Key (Recommended)</label>
+          <input type="password" id="geminiKeyInput" placeholder="AQ.Ab8... or AIzaSy...">
+          <small class="helper-text">Currently active and running high-speed Gemini 3.5 Flash.</small>
+        </div>
+
+        <div class="input-group">
+          <label for="openaiKeyInput" class="field-label">OpenAI API Key</label>
+          <input type="password" id="openaiKeyInput" placeholder="sk-proj-...">
+        </div>
+
+        <div class="input-group">
+          <label for="anthropicKeyInput" class="field-label">Anthropic Claude API Key</label>
+          <input type="password" id="anthropicKeyInput" placeholder="sk-ant-...">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="cancelSettingsBtn">Cancel</button>
+        <button class="btn btn-primary" id="saveSettingsBtn">Save Keys</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
