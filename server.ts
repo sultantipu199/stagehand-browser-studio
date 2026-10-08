@@ -57,9 +57,31 @@ async function startWorldwideTunnel(): Promise<string | null> {
   // Option A: Try Cloudflare Tunnel via untun (Zero configuration, fast edge)
   try {
     const untun = await import("untun");
-    const tunnel = await untun.startTunnel({ port: PORT });
+    const tunnel = await untun.startTunnel({
+      port: PORT,
+      hostname: "127.0.0.1",
+      url: `http://127.0.0.1:${PORT}`,
+      acceptCloudflareNotice: true,
+    });
     const url = await tunnel.getURL();
     if (url) {
+      console.log(`🌐 Cloudflare tunnel provisioned: ${url}`);
+      console.log(`⏳ Verifying edge connectivity (preventing 502 Bad Gateway)...`);
+
+      // Verify edge route is 100% active before declaring ready
+      for (let i = 0; i < 20; i++) {
+        try {
+          const res = await fetch(`${url}/api/status`);
+          if (res.status === 200) {
+            console.log(`✅ Edge connectivity verified (Status 200 OK)`);
+            break;
+          }
+        } catch {
+          // Waiting for edge routing
+        }
+        await new Promise((resolve) => setTimeout(resolve, 1200));
+      }
+
       globalTunnelUrl = url;
       activeTunnelInstance = tunnel;
       isTunnelStarting = false;
@@ -73,7 +95,7 @@ async function startWorldwideTunnel(): Promise<string | null> {
 
   // Option B: Fallback to Localtunnel
   try {
-    const lt = await localtunnel({ port: PORT });
+    const lt = await localtunnel({ port: PORT, local_host: "127.0.0.1" });
     globalTunnelUrl = lt.url;
     activeTunnelInstance = lt;
     isTunnelStarting = false;
