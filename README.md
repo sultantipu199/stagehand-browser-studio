@@ -61,8 +61,8 @@ An intelligent, autonomous browser automation studio powered by **Stagehand** (b
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/your-username/stagehand-autonomous-browser-studio.git
-   cd stagehand-autonomous-browser-studio
+   git clone https://github.com/sultantipu199/stagehand-browser-studio.git
+   cd stagehand-browser-studio
    ```
 
 2. **Install dependencies**:
@@ -93,8 +93,6 @@ An intelligent, autonomous browser automation studio powered by **Stagehand** (b
 ## 📦 Project Structure
 
 ```text
-├── .github/workflows/
-│   └── ci.yml               # Automated GitHub Actions CI workflow
 ├── public/
 │   ├── index.html           # Glassmorphism cybernetic UI
 │   ├── style.css            # Responsive CSS (Desktop & Mobile)
