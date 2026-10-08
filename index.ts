@@ -15,9 +15,9 @@ function resolveModelConfiguration() {
   // If Gemini API Key is present and not a placeholder
   if (geminiKey && geminiKey !== "..." && !geminiKey.startsWith("sk-")) {
     return {
-      provider: "Google Gemini (gemini-3.5-flash)",
+      provider: "Google Gemini (gemini-3.5-flash-lite)",
       config: {
-        modelName: "google/gemini-3.5-flash",
+        modelName: "google/gemini-3.5-flash-lite",
         apiKey: geminiKey,
       },
     };

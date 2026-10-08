@@ -5,7 +5,7 @@ import os from "os";
 import dotenv from "dotenv";
 import QRCode from "qrcode";
 import localtunnel from "localtunnel";
-import { exec } from "child_process";
+import { exec, spawn } from "child_process";
 import { Stagehand } from "@browserbasehq/stagehand";
 
 // Load environment variables
@@ -52,65 +52,91 @@ async function startWorldwideTunnel(): Promise<string | null> {
   if (isTunnelStarting) return null;
 
   isTunnelStarting = true;
-  console.log("🌐 Initiating secure public tunnel for worldwide access...");
+  console.log("🌐 Initiating secure public tunnel via cloudflared (HTTP/2)...");
 
-  // Option A: Primary - Localtunnel with FIXED, persistent subdomain (Never changes, no 1033 errors)
+  const cloudflaredPath = "C:\\Users\\Administrator\\cloudflared.exe";
+  const bin = fs.existsSync(cloudflaredPath) ? cloudflaredPath : "cloudflared";
+
   try {
-    const lt = await localtunnel({
-      port: PORT,
-      local_host: "127.0.0.1",
-      subdomain: "stagehand-tipu",
-    });
+    const url = await new Promise<string | null>((resolve) => {
+      const proc = spawn(bin, ["tunnel", "--protocol", "http2", "--url", `http://127.0.0.1:${PORT}`]);
+      activeTunnelInstance = proc;
 
-    if (lt && lt.url) {
-      globalTunnelUrl = lt.url;
-      activeTunnelInstance = lt;
-      isTunnelStarting = false;
-      console.log(`✨ Permanent Global HTTPS URL established: ${lt.url}`);
-      broadcastSSE({ event: "tunnel_update", data: { publicUrl: lt.url, active: true } });
+      let resolved = false;
 
-      lt.on("close", () => {
-        console.log("Localtunnel closed.");
-        globalTunnelUrl = null;
-        activeTunnelInstance = null;
+      proc.stderr.on("data", (data) => {
+        const text = data.toString();
+        const match = text.match(/https:\/\/[a-zA-Z0-9-]+\.trycloudflare\.com/);
+        if (match && !resolved) {
+          resolved = true;
+          const tunnelUrl = match[0];
+          console.log(`✨ Cloudflare HTTP/2 Global HTTPS URL established: ${tunnelUrl}`);
+          resolve(tunnelUrl);
+        }
       });
 
-      return lt.url;
-    }
-  } catch (err: any) {
-    console.warn(`Localtunnel notice: ${err.message || err}. Trying Cloudflare tunnel...`);
-  }
+      proc.on("error", (err) => {
+        console.warn("Cloudflared process error:", err.message);
+        if (!resolved) {
+          resolved = true;
+          resolve(null);
+        }
+      });
 
-  // Option B: Fallback - Cloudflare Quick Tunnel via untun
-  try {
-    const untun = await import("untun");
-    const tunnel = await untun.startTunnel({
-      port: PORT,
-      hostname: "127.0.0.1",
-      url: `http://127.0.0.1:${PORT}`,
-      acceptCloudflareNotice: true,
+      proc.on("close", () => {
+        globalTunnelUrl = null;
+        activeTunnelInstance = null;
+        isTunnelStarting = false;
+      });
+
+      // 15s timeout
+      setTimeout(() => {
+        if (!resolved) {
+          resolved = true;
+          resolve(null);
+        }
+      }, 15000);
     });
-    const url = await tunnel.getURL();
+
     if (url) {
       globalTunnelUrl = url;
-      activeTunnelInstance = tunnel;
       isTunnelStarting = false;
-      console.log(`✨ Cloudflare Global HTTPS URL established: ${url}`);
       broadcastSSE({ event: "tunnel_update", data: { publicUrl: url, active: true } });
       return url;
     }
   } catch (err: any) {
-    console.error(`Tunnel error: ${err.message || err}`);
+    console.warn(`Direct cloudflared attempt note: ${err.message || err}. Falling back to Localtunnel...`);
   }
 
-  isTunnelStarting = false;
-  return null;
+  // Fallback: Localtunnel
+  try {
+    const lt = await localtunnel({ port: PORT, local_host: "127.0.0.1" });
+    globalTunnelUrl = lt.url;
+    activeTunnelInstance = lt;
+    isTunnelStarting = false;
+    console.log(`✨ Localtunnel Global HTTPS URL established: ${lt.url}`);
+    broadcastSSE({ event: "tunnel_update", data: { publicUrl: lt.url, active: true } });
+
+    lt.on("close", () => {
+      console.log("Tunnel closed.");
+      globalTunnelUrl = null;
+      activeTunnelInstance = null;
+    });
+
+    return lt.url;
+  } catch (err: any) {
+    console.error(`Tunnel error: ${err.message || err}`);
+    isTunnelStarting = false;
+    return null;
+  }
 }
 
 async function stopWorldwideTunnel() {
   if (activeTunnelInstance) {
     try {
-      if (typeof activeTunnelInstance.close === "function") {
+      if (typeof activeTunnelInstance.kill === "function") {
+        activeTunnelInstance.kill();
+      } else if (typeof activeTunnelInstance.close === "function") {
         await activeTunnelInstance.close();
       }
     } catch {
@@ -176,9 +202,9 @@ function resolveModel() {
 
   if (geminiKey && geminiKey !== "..." && !geminiKey.startsWith("sk-")) {
     return {
-      provider: "Google Gemini (gemini-3.5-flash)",
+      provider: "Google Gemini (gemini-3.5-flash-lite)",
       config: {
-        modelName: "google/gemini-3.5-flash",
+        modelName: "google/gemini-3.5-flash-lite",
         apiKey: geminiKey,
       },
     };
