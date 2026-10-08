@@ -46,7 +46,7 @@ function getLocalNetworkIp(): string {
   return "localhost";
 }
 
-// Function to start Worldwide Public Tunnel (Cloudflare or Localtunnel)
+// Function to start Worldwide Public Tunnel (Localtunnel fixed subdomain + Cloudflare fallback)
 async function startWorldwideTunnel(): Promise<string | null> {
   if (globalTunnelUrl) return globalTunnelUrl;
   if (isTunnelStarting) return null;
@@ -54,7 +54,34 @@ async function startWorldwideTunnel(): Promise<string | null> {
   isTunnelStarting = true;
   console.log("🌐 Initiating secure public tunnel for worldwide access...");
 
-  // Option A: Try Cloudflare Tunnel via untun (Zero configuration, fast edge)
+  // Option A: Primary - Localtunnel with FIXED, persistent subdomain (Never changes, no 1033 errors)
+  try {
+    const lt = await localtunnel({
+      port: PORT,
+      local_host: "127.0.0.1",
+      subdomain: "stagehand-tipu",
+    });
+
+    if (lt && lt.url) {
+      globalTunnelUrl = lt.url;
+      activeTunnelInstance = lt;
+      isTunnelStarting = false;
+      console.log(`✨ Permanent Global HTTPS URL established: ${lt.url}`);
+      broadcastSSE({ event: "tunnel_update", data: { publicUrl: lt.url, active: true } });
+
+      lt.on("close", () => {
+        console.log("Localtunnel closed.");
+        globalTunnelUrl = null;
+        activeTunnelInstance = null;
+      });
+
+      return lt.url;
+    }
+  } catch (err: any) {
+    console.warn(`Localtunnel notice: ${err.message || err}. Trying Cloudflare tunnel...`);
+  }
+
+  // Option B: Fallback - Cloudflare Quick Tunnel via untun
   try {
     const untun = await import("untun");
     const tunnel = await untun.startTunnel({
@@ -65,23 +92,6 @@ async function startWorldwideTunnel(): Promise<string | null> {
     });
     const url = await tunnel.getURL();
     if (url) {
-      console.log(`🌐 Cloudflare tunnel provisioned: ${url}`);
-      console.log(`⏳ Verifying edge connectivity (preventing 502 Bad Gateway)...`);
-
-      // Verify edge route is 100% active before declaring ready
-      for (let i = 0; i < 20; i++) {
-        try {
-          const res = await fetch(`${url}/api/status`);
-          if (res.status === 200) {
-            console.log(`✅ Edge connectivity verified (Status 200 OK)`);
-            break;
-          }
-        } catch {
-          // Waiting for edge routing
-        }
-        await new Promise((resolve) => setTimeout(resolve, 1200));
-      }
-
       globalTunnelUrl = url;
       activeTunnelInstance = tunnel;
       isTunnelStarting = false;
@@ -90,30 +100,11 @@ async function startWorldwideTunnel(): Promise<string | null> {
       return url;
     }
   } catch (err: any) {
-    console.warn(`Cloudflare tunnel note: ${err.message || err}. Falling back to Localtunnel...`);
+    console.error(`Tunnel error: ${err.message || err}`);
   }
 
-  // Option B: Fallback to Localtunnel
-  try {
-    const lt = await localtunnel({ port: PORT, local_host: "127.0.0.1" });
-    globalTunnelUrl = lt.url;
-    activeTunnelInstance = lt;
-    isTunnelStarting = false;
-    console.log(`✨ Localtunnel Global HTTPS URL established: ${lt.url}`);
-    broadcastSSE({ event: "tunnel_update", data: { publicUrl: lt.url, active: true } });
-
-    lt.on("close", () => {
-      console.log("Tunnel closed.");
-      globalTunnelUrl = null;
-      activeTunnelInstance = null;
-    });
-
-    return lt.url;
-  } catch (err: any) {
-    console.error(`Failed to initialize public tunnel: ${err.message}`);
-    isTunnelStarting = false;
-    return null;
-  }
+  isTunnelStarting = false;
+  return null;
 }
 
 async function stopWorldwideTunnel() {
