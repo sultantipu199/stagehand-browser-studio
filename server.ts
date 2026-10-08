@@ -5,6 +5,7 @@ import os from "os";
 import dotenv from "dotenv";
 import QRCode from "qrcode";
 import localtunnel from "localtunnel";
+import { exec } from "child_process";
 import { Stagehand } from "@browserbasehq/stagehand";
 
 // Load environment variables
@@ -478,12 +479,19 @@ app.post("/api/settings", (req, res) => {
 
 // Start Server on 0.0.0.0 and optionally auto-initialize worldwide tunnel
 const lanIp = getLocalNetworkIp();
-app.listen(PORT, "0.0.0.0", async () => {
+const server = app.listen(PORT, "0.0.0.0", async () => {
   console.log(`\n========================================================================`);
   console.log(`🚀 STAGEHAND AI STUDIO - LIVE CONTROLLER`);
   console.log(`💻 Local Desktop Access:  http://localhost:${PORT}`);
   console.log(`🏠 Same Wi-Fi Access:     http://${lanIp}:${PORT}`);
   console.log(`========================================================================`);
+
+  // Auto-launch default browser on desktop
+  if (process.env.AUTO_OPEN_BROWSER !== "false") {
+    const openCmd = process.platform === "win32" ? "start" : process.platform === "darwin" ? "open" : "xdg-open";
+    exec(`${openCmd} http://localhost:${PORT}`);
+    console.log(`🖥️ Desktop browser launched: http://localhost:${PORT}`);
+  }
 
   // Proactively start Worldwide Public HTTPS Tunnel
   const publicUrl = await startWorldwideTunnel();
@@ -491,5 +499,16 @@ app.listen(PORT, "0.0.0.0", async () => {
     console.log(`🌍 WORLDWIDE INTERNET URL: ${publicUrl}`);
     console.log(`📱 Use this URL from ANY phone on 4G/5G or any Wi-Fi in the world!`);
     console.log(`========================================================================\n`);
+  }
+});
+
+server.on("error", (err: any) => {
+  if (err.code === "EADDRINUSE") {
+    console.warn(`\n⚠️ Port ${PORT} is already in use by another running instance.`);
+    console.log(`🌐 Opening existing browser studio at: http://localhost:${PORT}\n`);
+    const openCmd = process.platform === "win32" ? "start" : process.platform === "darwin" ? "open" : "xdg-open";
+    exec(`${openCmd} http://localhost:${PORT}`);
+  } else {
+    console.error("Server error:", err);
   }
 });
