@@ -281,26 +281,45 @@ app.get("/api/status", (req, res) => {
   });
 });
 
+function smartResolveTargetUrl(rawUrl?: string, instruction?: string): string {
+  if (rawUrl && rawUrl.trim()) {
+    let clean = rawUrl.trim();
+    if (!/^https?:\/\//i.test(clean)) {
+      clean = `https://${clean}`;
+    }
+    return clean;
+  }
+
+  const text = (instruction || "").toLowerCase();
+  if (text.includes("youtube") || text.includes("ইউটিউব")) return "https://www.youtube.com";
+  if (text.includes("daraz") || text.includes("দারাজ")) return "https://www.daraz.com.bd";
+  if (text.includes("prothomalo") || text.includes("প্রথম আলো") || text.includes("সংবাদ") || text.includes("খবর")) return "https://www.prothomalo.com";
+  if (text.includes("facebook") || text.includes("ফেসবুক")) return "https://www.facebook.com";
+  if (text.includes("wikipedia") || text.includes("উইকিপিডিয়া")) return "https://en.wikipedia.org";
+  if (text.includes("github") || text.includes("গিটহাব")) return "https://github.com";
+
+  const domainMatch = text.match(/([a-z0-9\-]+\.(?:com|org|net|bd|io|co|gov))/i);
+  if (domainMatch) {
+    return `https://${domainMatch[1]}`;
+  }
+
+  return "https://www.google.com";
+}
+
 // Run automation endpoint
 app.post("/api/run", async (req, res) => {
   if (isRunning) {
-    return res.status(400).json({ error: "Another automation task is currently running." });
+    return res.status(400).json({ error: "বর্তমানে আরেকটি অটোমেশন কাজ চলছে (Another task is currently running)." });
   }
 
   let { url, instruction, mode = "act", headless = false } = req.body;
 
-  if (!url || !url.trim()) {
-    return res.status(400).json({ error: "Target URL is required." });
-  }
-
-  url = url.trim();
-  if (!/^https?:\/\//i.test(url)) {
-    url = `https://${url}`;
-  }
-
   if (!instruction || !instruction.trim()) {
-    return res.status(400).json({ error: "AI Instruction is required." });
+    return res.status(400).json({ error: "অনুগ্রহ করে আপনি কী করাতে চান তা লিখুন (AI instruction is required)." });
   }
+
+  // Smart URL deduction if URL was left blank or empty
+  url = smartResolveTargetUrl(url, instruction);
 
   const { provider, config: modelConfig } = resolveModel();
   if (provider === "No Active Key") {

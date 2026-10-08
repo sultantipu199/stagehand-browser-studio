@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
-  <title>Stagehand Studio - Autonomous AI Browser Automation</title>
+  <title>Stagehand এআই ব্রাউজার স্টুডিও (AI Browser Studio)</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <meta name="theme-color" content="#080c14">
 </head>
@@ -22,28 +22,34 @@
         </svg>
       </div>
       <div>
-        <h1 class="logo-title">Stagehand Studio</h1>
-        <p class="logo-sub">Autonomous AI Browser Automation Controller</p>
+        <h1 class="logo-title" id="txtLogoTitle">Stagehand এআই ব্রাউজার</h1>
+        <p class="logo-sub" id="txtLogoSub">কম্পিউটার ও মোবাইল থেকে অটোমেটিক ব্রাউজার কন্ট্রোলার</p>
       </div>
     </div>
 
     <div class="header-status">
+      <!-- Language Toggle -->
+      <button class="lang-toggle-btn" id="langToggleBtn" title="Switch Language / ভাষা পরিবর্তন করুন">
+        <span class="lang-flag" id="langFlag">🇧🇩</span>
+        <span class="lang-text" id="langText">বাংলা</span>
+      </button>
+
       <!-- Engine Status -->
       <div class="status-badge" id="engineStatusBadge">
         <span class="status-dot" id="statusDot"></span>
-        <span id="engineStatusText">Idle</span>
+        <span id="engineStatusText">প্রস্তুত (Idle)</span>
       </div>
       
       <!-- AI Model Badge -->
       <div class="provider-badge" id="activeProviderBadge">
         <span class="provider-pill-dot"></span>
-        <span id="activeProviderText">Connecting...</span>
+        <span id="activeProviderText">Gemini 3.5 Flash</span>
       </div>
 
       <!-- Worldwide Online Status -->
       <button class="tunnel-badge" id="openTunnelModalBtn" title="Click to view Worldwide Link & QR Code">
         <span class="tunnel-dot" id="tunnelDot"></span>
-        <span id="tunnelStatusText">🌍 Worldwide</span>
+        <span id="tunnelStatusText">🌍 মোবাইল লিংক ও QR</span>
       </button>
 
       <!-- Settings Button -->
@@ -60,17 +66,16 @@
   <nav class="mobile-tabs-nav" id="mobileTabsNav">
     <button class="mobile-tab-btn active" id="tabBtnControl" data-target="control">
       <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="12" cy="12" r="3"></circle>
-        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        <polygon points="5 3 19 12 5 21 5 3"></polygon>
       </svg>
-      <span>Mission Control</span>
+      <span id="tabControlLabel">কন্ট্রোল প্যানেল</span>
     </button>
     <button class="mobile-tab-btn" id="tabBtnConsole" data-target="monitor">
       <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
         <polyline points="4 17 10 11 4 5"></polyline>
         <line x1="12" y1="19" x2="20" y2="19"></line>
       </svg>
-      <span>Live Terminal</span>
+      <span id="tabConsoleLabel">লাইভ মনিটর</span>
       <span class="tab-activity-indicator" id="terminalActivityBadge"></span>
     </button>
   </nav>
@@ -79,107 +84,208 @@
   <main class="app-layout">
     <!-- Left Column: Controls & Presets -->
     <section class="control-panel glass-card tab-view-active" id="controlPanelSection">
-      <div class="panel-header">
-        <h2>Mission Control</h2>
-        <span class="sub-label">Dispatch autonomous browser tasks in plain English</span>
+      
+      <!-- Easy 3-Step Guide Banner -->
+      <div class="guide-banner" id="guideBanner">
+        <div class="guide-step">
+          <span class="step-num">১</span>
+          <span class="step-txt" id="txtStep1">নিচে লিখুন বা মাইকে বলুন</span>
+        </div>
+        <div class="guide-arrow">➔</div>
+        <div class="guide-step">
+          <span class="step-num">২</span>
+          <span class="step-txt" id="txtStep2">"শুরু করুন" চাপুন</span>
+        </div>
+        <div class="guide-arrow">➔</div>
+        <div class="guide-step">
+          <span class="step-num">৩</span>
+          <span class="step-txt" id="txtStep3">এআই নিজে সব কাজ করবে!</span>
+        </div>
       </div>
 
-      <!-- Quick Presets -->
+      <!-- Quick 1-Click Preset Actions -->
       <div class="presets-section">
-        <label class="field-label">Quick Templates</label>
-        <div class="preset-chips">
-          <button class="preset-chip" id="presetGoogle" data-url="https://www.google.com" data-inst="Type 'Generative AI Engineering' into the search bar and press enter" data-mode="act">
-            🔍 Google Search
+        <div class="section-title-row">
+          <label class="field-label" id="txtQuickPresets">⚡ জনপ্রিয় কাজসমূহ (১-ক্লিকে সিলেক্ট করুন):</label>
+        </div>
+        <div class="preset-grid">
+          <button class="preset-card active-card" id="presetGoogle" data-url="https://www.google.com" data-inst="গুগলে সার্চ করো: আজকের বাংলাদেশ সংবাদ" data-mode="act">
+            <span class="preset-icon">🔍</span>
+            <div class="preset-info">
+              <strong id="presetGoogleTitle">গুগলে সার্চ</strong>
+              <small id="presetGoogleSub">যেকোনো তথ্য বা উত্তর খুঁজুন</small>
+            </div>
           </button>
-          <button class="preset-chip" id="presetWiki" data-url="https://en.wikipedia.org" data-inst="Search for 'Autonomous agent' and extract the introductory paragraph" data-mode="extract">
-            📖 Wikipedia Extract
+          
+          <button class="preset-card" id="presetYouTube" data-url="https://www.youtube.com" data-inst="ইউটিউবে গিয়ে আরজে কিবরিয়ার শো সার্চ করে প্রথম ভিডিওটি প্লে করো" data-mode="act">
+            <span class="preset-icon">📺</span>
+            <div class="preset-info">
+              <strong id="presetYouTubeTitle">ইউটিউব ভিডিও</strong>
+              <small id="presetYouTubeSub">ভিডিও সার্চ করে প্লে করুন</small>
+            </div>
           </button>
-          <button class="preset-chip" id="presetHackerNews" data-url="https://news.ycombinator.com" data-inst="Observe top story titles and interactive links" data-mode="observe">
-            📰 Hacker News
+
+          <button class="preset-card" id="presetNews" data-url="https://www.prothomalo.com" data-inst="প্রথম আলো ওয়েবসাইট ওপেন করে প্রধান খবরের শিরোনামটি দেখাও" data-mode="extract">
+            <span class="preset-icon">📰</span>
+            <div class="preset-info">
+              <strong id="presetNewsTitle">আজকের খবর</strong>
+              <small id="presetNewsSub">প্রথম আলোর প্রধান খবর পড়ুন</small>
+            </div>
           </button>
-          <button class="preset-chip" id="presetDaraz" data-url="https://www.google.com" data-inst="Search for 'Latest Artificial Intelligence Research Papers' and submit" data-mode="act">
-            🤖 AI Research
+
+          <button class="preset-card" id="presetDaraz" data-url="https://www.daraz.com.bd" data-inst="দারাজে স্মার্ট ওয়াচ (Smart Watch) সার্চ করে দাম দেখাও" data-mode="act">
+            <span class="preset-icon">🛒</span>
+            <div class="preset-info">
+              <strong id="presetDarazTitle">দারাজ শপিং</strong>
+              <small id="presetDarazSub">পছন্দের পণ্যের দাম ও অফার</small>
+            </div>
           </button>
         </div>
       </div>
 
-      <!-- Target URL Input -->
+      <!-- Main Instruction Input with Voice Microphone -->
+      <div class="input-group main-instruction-group">
+        <div class="label-with-voice">
+          <label for="aiInstructionInput" class="field-label" id="txtInstructionLabel">
+            🎯 আপনি কী করাতে চান বলুন (বাংলা বা ইংরেজিতে):
+          </label>
+          <button type="button" class="voice-btn" id="voiceMicBtn" title="মুখে বলে নির্দেশ দিন (Speak to Type)">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+              <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
+              <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+            </svg>
+            <span id="voiceStatusText">মুখে বলুন</span>
+          </button>
+        </div>
+        
+        <div class="textarea-wrapper">
+          <textarea id="aiInstructionInput" rows="3" placeholder="যেমন: ইউটিউবে গিয়ে সুন্দর রিল্যাক্সিং মিউজিক বাজাও, অথবা গুগলে আজকের ঢাকা আবহাওয়া দেখো..." required>গুগলে সার্চ করো: আজকের বাংলাদেশ সংবাদ</textarea>
+        </div>
+        <div class="voice-listening-indicator" id="voiceListeningBar" style="display: none;">
+          <span class="pulse-ring"></span>
+          <span id="voiceListeningNotice">🎙️ আপনার কথা শুনছি... এখন বাংলায় বলুন...</span>
+        </div>
+      </div>
+
+      <!-- Target URL Input (Optional) -->
       <div class="input-group">
-        <label for="targetUrlInput" class="field-label">Target Website URL</label>
+        <label for="targetUrlInput" class="field-label-sub" id="txtUrlLabel">
+          🌐 ওয়েবসাইট লিংক <span class="badge-optional">(ঐচ্ছিক - খালি রাখলেও এআই নিজে বুঝে নেবে)</span>
+        </label>
         <div class="input-with-icon">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="10"></circle>
             <line x1="2" y1="12" x2="22" y2="12"></line>
             <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
           </svg>
-          <input type="url" id="targetUrlInput" placeholder="https://www.google.com" value="https://www.google.com" required autocomplete="off">
+          <input type="url" id="targetUrlInput" placeholder="যেমন: https://www.google.com বা youtube.com" value="https://www.google.com" autocomplete="off">
         </div>
       </div>
 
-      <!-- AI Instruction Input -->
-      <div class="input-group">
-        <label for="aiInstructionInput" class="field-label">AI Natural Language Instruction</label>
-        <textarea id="aiInstructionInput" rows="3" placeholder="Tell the AI what to do (e.g. Type 'Generative AI Engineering' and press Enter, click Login, or extract the pricing table)..." required>Type 'Generative AI Engineering' into the search bar and press enter</textarea>
-      </div>
+      <!-- Collapsible Advanced Settings (Kept clean for non-technical users) -->
+      <details class="advanced-settings-accordion" id="advancedAccordion">
+        <summary class="advanced-summary" id="txtAdvancedOptions">
+          ⚙️ উন্নত সেটিংস ও মোড (Advanced Options)
+        </summary>
+        <div class="advanced-content">
+          <div class="options-row">
+            <div class="mode-selector">
+              <label class="field-label-small" id="txtModeLabel">অ্যাকশন মোড:</label>
+              <div class="radio-tabs">
+                <label class="tab-label">
+                  <input type="radio" name="executionMode" value="act" checked>
+                  <span title="ব্রাউজারে সরাসরি কাজ করানো">Act (কাজ করা)</span>
+                </label>
+                <label class="tab-label">
+                  <input type="radio" name="executionMode" value="extract">
+                  <span title="পেজ থেকে তথ্য বা ডাটা সংগ্রহ করা">Extract (ডাটা নেওয়া)</span>
+                </label>
+                <label class="tab-label">
+                  <input type="radio" name="executionMode" value="observe">
+                  <span title="পেজের বাটন ও লিঙ্ক পর্যবেক্ষণ করা">Observe (দেখা)</span>
+                </label>
+              </div>
+            </div>
 
-      <!-- Mode & Options -->
-      <div class="options-row">
-        <div class="mode-selector">
-          <label class="field-label">Execution Mode</label>
-          <div class="radio-tabs">
-            <label class="tab-label">
-              <input type="radio" name="executionMode" value="act" checked>
-              <span>Act</span>
-            </label>
-            <label class="tab-label">
-              <input type="radio" name="executionMode" value="extract">
-              <span>Extract</span>
-            </label>
-            <label class="tab-label">
-              <input type="radio" name="executionMode" value="observe">
-              <span>Observe</span>
-            </label>
+            <div class="headless-toggle">
+              <label class="field-label-small" id="txtBrowserViewLabel">ব্রাউজার স্ক্রিন:</label>
+              <div class="switch-row">
+                <label class="switch">
+                  <input type="checkbox" id="headlessCheckbox">
+                  <span class="slider"></span>
+                </label>
+                <span class="switch-text" id="headlessLabel">স্ক্রিনে ব্রাউজার দেখাও</span>
+              </div>
+            </div>
           </div>
         </div>
-
-        <div class="headless-toggle">
-          <label class="field-label">Browser View</label>
-          <label class="switch">
-            <input type="checkbox" id="headlessCheckbox">
-            <span class="slider"></span>
-          </label>
-          <span class="switch-text" id="headlessLabel">Visible GUI</span>
-        </div>
-      </div>
+      </details>
 
       <!-- Desktop Action Buttons -->
       <div class="action-buttons desktop-only">
-        <button class="btn btn-primary" id="runAutomationBtn">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+        <button class="btn btn-primary btn-launch-glow" id="runAutomationBtn">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
             <polygon points="5 3 19 12 5 21 5 3"></polygon>
           </svg>
-          Launch Autonomous Agent
+          <span id="btnRunText">🚀 এআই ব্রাউজার শুরু করুন</span>
         </button>
         <button class="btn btn-danger" id="stopAutomationBtn" disabled>
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
             <rect x="6" y="6" width="12" height="12"></rect>
           </svg>
-          Stop Session
+          <span id="btnStopText">থামুন (Stop)</span>
         </button>
       </div>
     </section>
 
-    <!-- Right Column: Live Terminal & Results -->
+    <!-- Right Column: Live Progress & Terminal -->
     <section class="monitor-panel glass-card" id="monitorPanelSection">
+      
+      <!-- Visual Step Progress Tracker (Beginner Friendly) -->
+      <div class="progress-stepper-card" id="progressStepperCard">
+        <h3 class="stepper-title" id="txtProgressTitle">📊 কাজের বর্তমান অবস্থা:</h3>
+        <div class="stepper-steps">
+          <div class="step-item" id="stepLaunch">
+            <div class="step-icon">1</div>
+            <div class="step-details">
+              <strong id="stepLaunchTxt">ব্রাউজার চালু</strong>
+              <small id="stepLaunchSub">কম্পিউটারে ক্রোম ওপেন হচ্ছে</small>
+            </div>
+          </div>
+          <div class="step-item" id="stepNavigate">
+            <div class="step-icon">2</div>
+            <div class="step-details">
+              <strong id="stepNavTxt">ওয়েবসাইটে প্রবেশ</strong>
+              <small id="stepNavSub">পেজ লোড সম্পন্ন</small>
+            </div>
+          </div>
+          <div class="step-item" id="stepExecute">
+            <div class="step-icon">3</div>
+            <div class="step-details">
+              <strong id="stepExecTxt">এআই কাজ করছে</strong>
+              <small id="stepExecSub">ক্লিক ও টাইপিং সম্পাদন</small>
+            </div>
+          </div>
+          <div class="step-item" id="stepDone">
+            <div class="step-icon">4</div>
+            <div class="step-details">
+              <strong id="stepDoneTxt">কাজ সম্পন্ন!</strong>
+              <small id="stepDoneSub">সফলভাবে সমাপ্ত</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Terminal Header -->
       <div class="monitor-header">
         <div class="terminal-tab">
           <span class="tab-dot dot-red"></span>
           <span class="tab-dot dot-yellow"></span>
           <span class="tab-dot dot-green"></span>
-          <span class="tab-title">Live Execution Console</span>
+          <span class="tab-title" id="txtConsoleTitle">লাইভ টার্মিনাল লগ</span>
         </div>
         <div class="terminal-actions">
-          <button class="btn-sm" id="clearConsoleBtn">Clear Logs</button>
+          <button class="btn-sm" id="clearConsoleBtn">লগ ক্লিয়ার করুন</button>
         </div>
       </div>
 
@@ -187,15 +293,18 @@
       <div class="terminal-body" id="terminalBody">
         <div class="log-line log-system">
           <span class="log-time">[System]</span>
-          <span class="log-msg">Stagehand Studio initialized. Ready for automation mission.</span>
+          <span class="log-msg" id="txtInitialLog">Stagehand এআই স্টুডিও প্রস্তুত। উপরে আপনার নির্দেশ লিখে "শুরু করুন" বাটনে চাপ দিন।</span>
         </div>
       </div>
 
       <!-- Results Display Drawer -->
       <div class="results-drawer" id="resultsDrawer" style="display: none;">
         <div class="results-header">
-          <h3>Extracted Output</h3>
-          <button class="btn-sm" id="closeResultsBtn">&times;</button>
+          <h3 id="txtResultTitle">🎉 সংগৃহীত ফলাফল:</h3>
+          <div class="results-actions">
+            <button class="btn-sm" id="copyResultBtn">কপি করুন</button>
+            <button class="btn-sm" id="closeResultsBtn">&times;</button>
+          </div>
         </div>
         <pre class="results-code" id="resultsContent"></pre>
       </div>
@@ -205,10 +314,10 @@
   <!-- Mobile Floating Sticky Bottom Launch Bar -->
   <div class="mobile-bottom-bar" id="mobileBottomBar">
     <button class="btn btn-primary mobile-launch-btn" id="mobileRunAutomationBtn">
-      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
         <polygon points="5 3 19 12 5 21 5 3"></polygon>
       </svg>
-      <span id="mobileLaunchBtnText">Launch Agent</span>
+      <span id="mobileLaunchBtnText">🚀 এআই শুরু করুন</span>
     </button>
     <button class="btn btn-danger mobile-stop-btn" id="mobileStopAutomationBtn" disabled>
       <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
@@ -222,8 +331,8 @@
     <div class="modal-card glass-card qr-modal-card">
       <div class="modal-header">
         <div class="qr-modal-title-group">
-          <h2>🌍 Worldwide Remote & Mobile Access</h2>
-          <p class="modal-desc">Access this dashboard from ANY device, ANY cellular network (4G/5G), or ANY Wi-Fi worldwide.</p>
+          <h2 id="txtModalQrTitle">🌍 মোবাইল ফোন থেকে ব্যবহার করার নিয়ম</h2>
+          <p class="modal-desc" id="txtModalQrDesc">বিশ্বের যেকোনো প্রান্ত থেকে যেকোনো সিম কার্ডের ইন্টারনেট (4G/5G) বা ওয়াই-ফাই দিয়ে আপনার ফোন থেকে নিয়ন্ত্রণ করুন।</p>
         </div>
         <button class="close-modal-btn" id="closeQrModalBtn">&times;</button>
       </div>
@@ -236,32 +345,32 @@
         <!-- Public Worldwide URL -->
         <div class="qr-info-box">
           <div class="url-label-row">
-            <span class="status-indicator-pill active">🌐 Worldwide HTTPS (Public)</span>
-            <span class="badge-tag">Any Network / 4G / 5G</span>
+            <span class="status-indicator-pill active" id="txtWorldwidePill">🌐 বিশ্বব্যাপী পাবলিক লিংক (Worldwide HTTPS)</span>
+            <span class="badge-tag">যে কোনো মোবাইল নেটওয়ার্ক</span>
           </div>
           <div class="copy-url-group">
-            <input type="text" id="publicUrlDisplay" readonly value="Connecting tunnel...">
+            <input type="text" id="publicUrlDisplay" readonly value="লিংক তৈরি হচ্ছে...">
             <button class="btn-copy" id="copyPublicUrlBtn">
-              <span id="copyPublicBtnText">Copy</span>
+              <span id="copyPublicBtnText">কপি করুন</span>
             </button>
           </div>
 
           <!-- Local Wi-Fi URL -->
           <div class="url-label-row" style="margin-top: 10px;">
-            <span class="status-indicator-pill">🏠 Same Wi-Fi Network</span>
-            <span class="badge-tag">Local LAN</span>
+            <span class="status-indicator-pill" id="txtLanPill">🏠 একই ওয়াই-ফাই নেটওয়ার্ক</span>
+            <span class="badge-tag">লোকাল রাউটার</span>
           </div>
           <div class="copy-url-group">
-            <input type="text" id="lanUrlDisplay" readonly value="Loading...">
+            <input type="text" id="lanUrlDisplay" readonly value="লোড হচ্ছে...">
             <button class="btn-copy" id="copyLanUrlBtn">
-              <span id="copyLanBtnText">Copy</span>
+              <span id="copyLanBtnText">কপি করুন</span>
             </button>
           </div>
 
           <!-- Tunnel Toggle -->
           <div class="tunnel-toggle-row">
-            <button class="btn-toggle-tunnel" id="toggleTunnelBtn">Restart Public Tunnel</button>
-            <p class="qr-tip">💡 Scan the QR Code with your smartphone camera to immediately control your agent from anywhere.</p>
+            <button class="btn-toggle-tunnel" id="toggleTunnelBtn">টানেল রিস্টার্ট করুন</button>
+            <p class="qr-tip" id="txtQrTip">💡 সহজ উপায়: আপনার ফোনের ক্যামেরা দিয়ে এই QR কোডটি স্ক্যান করলেই সরাসরি এই ড্যাশবোর্ড আপনার ফোনে চালু হবে!</p>
           </div>
         </div>
       </div>
@@ -272,31 +381,31 @@
   <div class="modal-backdrop" id="settingsModal" style="display: none;">
     <div class="modal-card glass-card">
       <div class="modal-header">
-        <h2>AI Model & API Key Settings</h2>
+        <h2 id="txtSettingsTitle">⚙️ এআই মডেল ও এপিআই কি সেটিংস</h2>
         <button class="close-modal-btn" id="closeSettingsBtn">&times;</button>
       </div>
       <div class="modal-body">
-        <p class="modal-desc">Configure your LLM API keys directly. Changes are automatically saved to your <code>.env</code> file.</p>
+        <p class="modal-desc" id="txtSettingsDesc">আপনার এআই কি এখানে কনফিগার করুন। এটি স্বয়ংক্রিয়ভাবে সেভ হয়ে যাবে।</p>
         
         <div class="input-group">
-          <label for="geminiKeyInput" class="field-label">Google Gemini API Key (Recommended)</label>
+          <label for="geminiKeyInput" class="field-label">Google Gemini API Key (সক্রিয় ও সুপারফাস্ট)</label>
           <input type="password" id="geminiKeyInput" placeholder="AQ.Ab8... or AIzaSy...">
-          <small class="helper-text">Currently active and running high-speed Gemini 3.5 Flash.</small>
+          <small class="helper-text">বর্তমানে সক্রিয়: Gemini 3.5 Flash (সম্পূর্ণ ফ্রি ও আনলিমিটেড স্পিড)।</small>
         </div>
 
         <div class="input-group">
-          <label for="openaiKeyInput" class="field-label">OpenAI API Key</label>
+          <label for="openaiKeyInput" class="field-label">OpenAI API Key (ঐচ্ছিক)</label>
           <input type="password" id="openaiKeyInput" placeholder="sk-proj-...">
         </div>
 
         <div class="input-group">
-          <label for="anthropicKeyInput" class="field-label">Anthropic Claude API Key</label>
+          <label for="anthropicKeyInput" class="field-label">Anthropic Claude API Key (ঐচ্ছিক)</label>
           <input type="password" id="anthropicKeyInput" placeholder="sk-ant-...">
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-secondary" id="cancelSettingsBtn">Cancel</button>
-        <button class="btn btn-primary" id="saveSettingsBtn">Save Keys</button>
+        <button class="btn btn-secondary" id="cancelSettingsBtn">বাতিল (Cancel)</button>
+        <button class="btn btn-primary" id="saveSettingsBtn">সংরক্ষণ করুন (Save)</button>
       </div>
     </div>
   </div>
